@@ -1,0 +1,32 @@
+services:
+  broker:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    hostname: broker-mqtt
+    ports:
+      - "1883:1883" 
+      - "9001:9001" 
+    volumes:
+      - ./config:/mosquitto/config:rw
+      - ./data:/mosquitto/data:rw
+      - ./log:/mosquitto/log:rw
+    restart: unless-stopped
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: temperature-simulator
+    restart: always
+    depends_on:
+      - broker
+
+volumes:
+  config:
+  data:
+  log:
+
+networks:
+  default:
+    name: mqtt5-network
+
